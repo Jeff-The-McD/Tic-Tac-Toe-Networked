@@ -11,10 +11,14 @@ public class HexClient {
 		try {
 			if (args.length != 1) {
 				run("localhost");
+			} else {
+				run(args[0]);
 			}
-			run(args[0]);
 		} catch (IOException e) {
-			System.err.println("Failled to connect to " + args[0] + " at port:" + 51453);
+			if (args.length > 0)
+				System.err.println("Failled to connect to " + args[0] + " at port: 51453");
+			else
+				System.err.println("Failled to connect to localhost at port: 51453");
 		}
 	}
 
@@ -25,16 +29,24 @@ public class HexClient {
 		Scanner sc = new Scanner(System.in);
 
 		System.out.println("f   = fetch responce from server");
-		System.out.println("s## = send server hex \"0x##\"");
+		System.out.println("q   = quit");
+		System.out.println("s## = send server the hex \"0x##\"");
+		System.out.println("see Msg.java for a list of hex codes to send to the server");
 		System.out.print("> ");
 		while (sc.hasNext()) {
 			String cmd = sc.next();
+			if (cmd.equals("q")) {
+				out.write(Msg.QUIT);
+				break;
+			}
 			if (cmd.equals("f")) { /* fetch */
-				if (in.available() > 0) {
-					int msg = in.read();
-					System.out.println(Msg.serverMsgDescription(msg));
-				} else {
+				if (in.available() == 0) {
 					System.out.println("nothing available");
+				} else {
+					do {
+						int msg = in.read();
+						System.out.println(Msg.serverMsgDescription(msg));
+					} while (in.available() > 0);
 				}
 			} else if (cmd.startsWith("s")) { /* send */
 				try {
