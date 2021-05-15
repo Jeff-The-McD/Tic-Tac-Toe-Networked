@@ -9,9 +9,7 @@ import java.util.Scanner;
 
 
 public class HexClient {
-	private static String board[][] = {{"1","2","3"},{"4","5","6"},{"7","8","9"}};
-	private static Socket socket;
-	private static InputStream in;
+	private static String[][] board = {{"1","2","3"},{"4","5","6"},{"7","8","9"}};
 	private static OutputStream out;
 	private static Scanner sc;
 	private static char player;
@@ -33,8 +31,8 @@ public class HexClient {
 	}
 
 	public static void run(String ip) throws IOException {
-		socket = new Socket("localhost", 51453);
-		in = socket.getInputStream();
+		Socket socket = new Socket("localhost", 51453);
+		InputStream in = socket.getInputStream();
 		out = socket.getOutputStream();
 		sc = new Scanner(System.in);
 		int msg = 0;
@@ -70,6 +68,8 @@ public class HexClient {
 				int index = Character.getNumericValue(response.charAt(response.length()-1));
 
 				board[(index-1)/3][(index-1)%3] = Character.toString(opponent);
+				if(hasWinner())
+					continue;
 				makeMove();
 			}
 			else if(response.charAt(1) == '8'){
@@ -81,6 +81,7 @@ public class HexClient {
 				int index = Character.getNumericValue(response.charAt(response.length()-1));
 
 				board[(index-1)/3][(index-1)%3] = Character.toString(player);
+				System.out.println("Please wait for your opponent to finish their turn.\n\n");
 			}
 			else if(response.charAt(0) == '2'){
 				System.out.println(response.substring(4));
@@ -90,11 +91,21 @@ public class HexClient {
 			}
 			else if(response.charAt(0) >= '4'){
 				System.out.println(response.substring(4));
-				break;
+				System.out.println("Would you like to play again? (y/n)");
+				String userInput = sc.next();
+				if(userInput.equals("y")) {
+					resetBoard();
+					if(player=='X')
+						makeMove();
+				}
+				else {
+					out.write(Msg.QUIT);
+					break;
+				}
 			}
 		}
 
-
+		out.flush();
 		sc.close();
 		out.close();
 		in.close();
@@ -111,13 +122,26 @@ public class HexClient {
 				else
 					System.out.println(board[i][j]);
 			}
-		System.out.println("Please enter which square you want to place your mark. If you would like to quit, enter q.");
+		System.out.println("Please enter which square you would like to place your mark at.");
 		userInput = sc.next();
-		if(userInput.equals("q")){
-			out.write(Msg.QUIT);
-			System.exit(0);
-		}
 		out.write(Integer.parseInt(userInput, 16));
+	}
+
+	public static void resetBoard(){
+		for(int i=0; i<3; i++)
+			for(int j=0; j<3; j++)
+				board[i][j] = Integer.toString((j+1)+(3*i));
+	}
+
+	public static boolean hasWinner() {
+		return (board[0][0] != null && board[0][0].equals(board[0][1]) && board[0][0].equals(board[0][2]))
+				|| (board[1][0] != null && board[1][0].equals(board[1][1]) && board[1][0].equals(board[1][2]))
+				|| (board[2][0] != null && board[2][0].equals(board[2][1]) && board[2][0].equals(board[2][2]))
+				|| (board[0][0] != null && board[0][0].equals(board[1][0]) && board[0][0].equals(board[2][0]))
+				|| (board[0][1] != null && board[0][1].equals(board[1][1]) && board[0][1].equals(board[2][1]))
+				|| (board[0][2] != null && board[0][2].equals(board[1][2]) && board[0][2].equals(board[2][2]))
+				|| (board[0][0] != null && board[0][0].equals(board[1][1]) && board[0][0].equals(board[2][2]))
+				|| (board[0][2] != null && board[0][2].equals(board[1][1]) && board[0][2].equals(board[2][0]));
 	}
 }
 
