@@ -10,7 +10,7 @@ public class Msg {
 	public static final int MOVE_FAILURE_OCCUPIED_BY_YOU = 0x20;
 	public static final int MOVE_FAILURE_OCCUPIED_BY_OPPONENT = 0x30;
 	
-	/*public static final int YOUR_TURN = 0x50;*/
+	//public static final int YOUR_TURN = 0x50;
 	public static final int OPPONENTS_TURN = 0x51;
 	
 	public static final int YOU_ARE_X = 0x52;
@@ -60,18 +60,20 @@ public class Msg {
 		} else {
 			int leftHalf = msg & COMMAND_MASK;
 			int rightHalf = msg & LOCATION_MASK;
+
+			name = "";
 			switch (leftHalf) {
 			case MOVE:
-				name += "Your opponent placed a mark";
+				name += "00: Your opponent placed a mark";
 				break;
 			case MOVE_CONFIRMED:
-				name += "You placed a mark";
+				name += "10: You placed a mark";
 				break;
 			case MOVE_FAILURE_OCCUPIED_BY_YOU:
-				name += "It is still your turn, you already placed a mark";
+				name += "00: It is still your turn, you already placed a mark";
 				break;
 			case MOVE_FAILURE_OCCUPIED_BY_OPPONENT:
-				name += "It is still your turn, your opponent already placed a mark";
+				name += "00: It is still your turn, your opponent already placed a mark";
 				break;
 			}
 			if (isValidLocation(rightHalf)) {

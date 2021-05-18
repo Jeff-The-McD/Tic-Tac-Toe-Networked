@@ -57,7 +57,7 @@ class Game {
 		System.out.println();
 	}
 
-	public synchronized int move(int location, Player player) {
+	public synchronized int move(int location, Player player) throws IOException {
 		if (player != currentPlayer) {
 			return Msg.OPPONENTS_TURN;
 		} else if (board[location-1] == player) {
@@ -68,6 +68,7 @@ class Game {
 		board[location-1] = currentPlayer;
 		currentPlayer = currentPlayer.opponent;
 		printBoard();
+
 		return Msg.MOVE_CONFIRMED|location;
 	}
 
@@ -143,7 +144,7 @@ class Game {
 				if ((msg&Msg.COMMAND_MASK) != Msg.MOVE) {
 					System.out.println("Unrecognized response from client"
 							+ Integer.toHexString(msg));
-					continue;
+					break;
 				}
 				int responce = move(msg, this);
 				if ((responce&Msg.COMMAND_MASK) == Msg.MOVE_CONFIRMED)
