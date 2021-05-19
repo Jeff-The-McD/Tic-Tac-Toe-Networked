@@ -29,6 +29,10 @@ public class HexClient {
 				System.err.println("Failled to connect to localhost at port: 51453");
 		}
 	}
+	/* establishes the socket connection to the server and sends the moves accordingly
+	 * @param: ip the address to which to connect the socket to
+	 * @return: void
+	 * */
 
 	public static void run(String ip) throws IOException {
 		Socket socket = new Socket("localhost", 51453);
@@ -111,6 +115,11 @@ public class HexClient {
 		in.close();
 		socket.close();
 	}
+	
+	/* the helper function that determines what moves are and aren't legal
+	 * @param: none
+	 * @return: void
+	 * */
 
 	public static void makeMove() throws IOException {
 		String userInput;
@@ -126,13 +135,23 @@ public class HexClient {
 		userInput = sc.next();
 		out.write(Integer.parseInt(userInput, 16));
 	}
-
+	
+	/* helps clear the board
+	 * @param: none
+	 * @return: void
+	 * */    
 	public static void resetBoard(){
 		for(int i=0; i<3; i++)
 			for(int j=0; j<3; j++)
 				board[i][j] = Integer.toString((j+1)+(3*i));
 	}
-
+	
+    
+	
+	/* determines the winner with the typical rules of a tic-tac-toe game.
+	 * @param: none
+	 * @return: none
+	 * */
 	public static boolean hasWinner() {
 		return (board[0][0] != null && board[0][0].equals(board[0][1]) && board[0][0].equals(board[0][2]))
 				|| (board[1][0] != null && board[1][0].equals(board[1][1]) && board[1][0].equals(board[1][2]))
