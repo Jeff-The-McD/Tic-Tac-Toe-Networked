@@ -1,0 +1,8 @@
+/bin/
+.classpath
+.project
+src/Game.class
+src/Game$Player.class
+src/HexClient.class
+src/Msg.class
+src/Server.class
