@@ -1,3 +1,9 @@
+/*
+ * 
+ * Purpose of this class is to act as middle man in sending the messages
+ * in hex between the client and server
+ * 
+ * */
 public class Msg {
 	public static final int LOCATION_MASK = 0x0F;
 	public static final int COMMAND_MASK = 0xF0;
@@ -5,6 +11,9 @@ public class Msg {
 	/* the following commands can only be sent from the server to the
 	 * client (and not the other way around) unless stated otherwise */
 	
+	/* move format of hex is in various formats such as 0x00 to state a move
+	 * all of these are related to a message needed in the game
+	 * */
 	public static final int MOVE = 0x00; /* can be sent by the client */
 	public static final int MOVE_CONFIRMED = 0x10;
 	public static final int MOVE_FAILURE_OCCUPIED_BY_YOU = 0x20;
@@ -22,7 +31,12 @@ public class Msg {
 	public static final int OPPONENT_CONNECTED = 0x57;
 	public static final int OPPONENT_NOT_CONNECTED = 0x58;
 	public static final int QUIT = 0x59; /* can be sent by the client */
-
+	
+	
+    /*
+     *param: msg: an int encoded in hexadecimal format 
+     *return: String: the appropriate response from the server on the state of the game
+     */
 	public static String serverMsgDescription(int msg) {
 		String name = Integer.toHexString(msg) + ": ";
 		if (msg >= OPPONENTS_TURN) {
@@ -84,6 +98,12 @@ public class Msg {
 		}
 		return name;
 	}
+	
+	/* handles messages sent from the client
+	 * typically to see the connection status of the client
+	 * param:int:hexadecimal msg
+	 * return: String: returns a msg from the client
+	 * */
 
 	public static String clientMsgDescription(int msg) {
 		String name = Integer.toHexString(msg) + ": ";
@@ -100,7 +120,10 @@ public class Msg {
 		return name;
 	}
 
-	
+	/* a function that ensures the location move is a valid one
+	 * param: int : hexadecimal msg
+	 * return:boolean: determines the validity of a location move
+	 * */
 	public static boolean isValidLocation(int msg) {
 		return msg > 0 && msg < 10;
 	}
